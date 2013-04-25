@@ -1,4 +1,18 @@
-errol
-=====
+# Errol
 
-Swing running UI for specs2 (or one of Lady Sybil Ramkin's Swamp dragons).
+Swing'ing UI for specs2 (or one of Lady Sybil Ramkin's Swamp dragons).
+
+## Requirements
+
+* Scala 2.10
+* Java 1.6+
+* SBT 0.12.2
+
+## Usage
+
+Errol can be used on SBT projects add dependency `"fr.applicius" %% "errol" % "VERSION"` 
+and having `"Applicius Snapshots" at "https://raw.github.com/applicius/mvn-repo/master/snapshots/"` in resolvers.
+
+## Build
+
+Errol can be built from these sources using SBT (0.12.2+): `sbt publish`
