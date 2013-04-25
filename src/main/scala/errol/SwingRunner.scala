@@ -13,12 +13,12 @@ import org.specs2.reporter.{ NotifierReporter, MessagesNotifier, Reporter }
 import org.specs2.specification.SpecificationStructure
 
 trait SwingRunner extends JFrame { self ⇒
-  val subReporter: Reporter
-  val specification: Specification
-  val buttonLabel: String
-  val runningMessage: String
-  val endMessage: String
-  val frameTitle: String
+  def subReporter: Reporter
+  def specification: Specification
+  def buttonLabel: String
+  def runningMessage: String
+  def endMessage: String
+  def frameTitle: String
 
   val panel = new JPanel()
 
