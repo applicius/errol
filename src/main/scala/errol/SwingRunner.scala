@@ -15,6 +15,8 @@ import org.specs2.specification.SpecificationStructure
 trait SwingRunner extends JFrame { self ⇒
   val subReporter: Reporter
   val specification: Specification
+  val buttonLabel: String
+  val runningMessage: String
   val endMessage: String
   val frameTitle: String
 
@@ -24,13 +26,13 @@ trait SwingRunner extends JFrame { self ⇒
   panel.setLayout(new GridLayout(3, 1, 5, 5))
   getContentPane.add(panel)
 
-  val label = new JLabel("Running…")
+  val label = new JLabel(runningMessage)
 
   val progressbar = new JProgressBar(0, 100)
   progressbar.setValue(0)
   progressbar.setStringPainted(true)
 
-  val button = new JButton("Close")
+  val button = new JButton(buttonLabel)
   button.setEnabled(false)
   button.setMargin(new Insets(2, 2, 2, 2))
   button.setSize(70, 30)
