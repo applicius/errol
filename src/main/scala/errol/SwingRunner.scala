@@ -12,9 +12,13 @@ import org.specs2.runner.ClassRunner
 import org.specs2.reporter.{ NotifierReporter, MessagesNotifier, Reporter }
 import org.specs2.specification.SpecificationStructure
 
+import scalaz.std.anyVal._
+import scalaz.std.iterable._
+import scalaz.syntax.foldable._
+
 trait SwingRunner extends JFrame { self ⇒
   def subReporter: Reporter
-  def specification: Specification
+  def specifications: Seq[Specification]
   def buttonLabel: String
   def runningMessage: String
   def endMessage: String
@@ -77,8 +81,7 @@ trait SwingRunner extends JFrame { self ⇒
   class Task extends SwingWorker[Unit, Unit] {
     def doInBackground {
       val task = this
-      val structure = self.specification.is
-      val steps: Float = structure.examples.size
+      val steps: Float = specifications.foldMap(_.is.examples.size)
       val incr = Math.round(100f / steps)
 
       val run = new ClassRunner {
@@ -88,7 +91,7 @@ trait SwingRunner extends JFrame { self ⇒
         }
       }
 
-      run(self.specification)
+      run(self.specifications:_*)
     }
 
     override def done {
