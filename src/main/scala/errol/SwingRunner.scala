@@ -20,6 +20,8 @@ trait SwingRunner extends JFrame { self ⇒
   def endMessage: String
   def frameTitle: String
 
+  def beforeClosing {}
+
   val panel = new JPanel()
 
   panel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5))
@@ -38,6 +40,7 @@ trait SwingRunner extends JFrame { self ⇒
   button.setSize(70, 30)
   button.addActionListener(new ActionListener() {
     def actionPerformed(event: ActionEvent) {
+      beforeClosing
       sys.exit(0)
     }
   })
@@ -89,6 +92,7 @@ trait SwingRunner extends JFrame { self ⇒
     }
 
     override def done {
+      setProgress(100)
       button.setEnabled(true)
       label.setText(s"""<html><div style="width: 300px"><bold>$endMessage</bold></div></html>""")
     }
@@ -110,14 +114,25 @@ trait SwingRunner extends JFrame { self ⇒
     // progression
     var i = 0
 
-    override def exampleSuccess(title: String, duration: Long) {
+    private def reportProgress {
       i += incr
-      task.reportProgress(Math.min(i, 100))
+      task.reportProgress(Math.min(i, 99))
+    }
+
+    override def exampleSuccess(title: String, duration: Long) {
+      reportProgress
     }
 
     override def exampleFailure(name: String, message: String, location: String, t: Throwable, details: Details, duration: Long) {
-      i += incr
-      task.reportProgress(Math.min(i, 100))
+      reportProgress
+    }
+
+    override def exampleSkipped(name: String, message: String, duration: Long) {
+      reportProgress
+    }
+
+    override def exampleError  (name: String, message: String, location: String, f: Throwable, duration: Long) {
+      reportProgress
     }
   }
 }
