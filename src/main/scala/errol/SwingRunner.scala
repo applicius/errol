@@ -1,8 +1,20 @@
 package errol
 
-import javax.swing._
-import java.awt.event._
+import javax.swing.{
+  BorderFactory,
+  JFrame,
+  JPanel,
+  JProgressBar,
+  JButton,
+  JLabel,
+  SwingUtilities,
+  SwingWorker
+}
+
 import java.awt.{ GridLayout, Insets, Component }
+
+import java.awt.event.{ ActionEvent, ActionListener }
+
 import java.beans.{ PropertyChangeListener, PropertyChangeEvent }
 
 import org.specs2.execute.Details
@@ -91,7 +103,7 @@ trait SwingRunner extends JFrame { self ⇒
         }
       }
 
-      run(self.specifications:_*)
+      run(self.specifications: _*)
     }
 
     override def done {
@@ -134,7 +146,7 @@ trait SwingRunner extends JFrame { self ⇒
       reportProgress
     }
 
-    override def exampleError  (name: String, message: String, location: String, f: Throwable, duration: Long) {
+    override def exampleError(name: String, message: String, location: String, f: Throwable, duration: Long) {
       reportProgress
     }
   }
