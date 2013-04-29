@@ -123,14 +123,19 @@ trait SwingRunner extends JFrame { self ⇒
 
     // progression
     var i = 0
+    var currentContext: String = _
 
     private def reportProgress {
       i += incr
       task.reportProgress(Math.min(i, 99))
     }
 
+    override def contextStart(name: String, location: String) {
+      currentContext = name
+    }
+
     override def exampleStarted(name: String, location: String) {
-      messageListener.propertyChange(new PropertyChangeEvent(this, "message", null, name))
+      messageListener.propertyChange(new PropertyChangeEvent(this, "message", null, s"$currentContext $name…"))
     }
 
     override def exampleSuccess(title: String, duration: Long) {
