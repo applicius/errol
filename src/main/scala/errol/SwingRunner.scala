@@ -62,7 +62,14 @@ trait SwingRunner extends JFrame { self ⇒
   def main(args: Array[String]) {
     SwingUtilities.invokeLater(new Runnable() {
       def run {
-        val task = new Task()
+        val messageListener = new PropertyChangeListener {
+          def propertyChange(e: PropertyChangeEvent) {
+            val message = e.getNewValue.asInstanceOf[String]
+
+            label.setText(message)
+          }
+        }
+        val task = new Task(messageListener)
         task.addPropertyChangeListener(new PropertyChangeListener() {
           def propertyChange(e: PropertyChangeEvent) {
             if ("progress" == e.getPropertyName) {
@@ -78,7 +85,7 @@ trait SwingRunner extends JFrame { self ⇒
     })
   }
 
-  class Task extends SwingWorker[Unit, Unit] {
+  class Task(messageListener: PropertyChangeListener) extends SwingWorker[Unit, Unit] {
     def doInBackground {
       val task = this
       val steps: Float = specifications.foldMap(_.is.examples.size)
@@ -87,7 +94,7 @@ trait SwingRunner extends JFrame { self ⇒
       val run = new ClassRunner {
         override lazy val reporter = new CustomReporter {
           protected val sub = self.subReporter
-          val notifier = new SwingNotifier(task, incr)
+          val notifier = new SwingNotifier(task, incr, messageListener)
         }
       }
 
@@ -112,7 +119,7 @@ trait SwingRunner extends JFrame { self ⇒
     }
   }
 
-  class SwingNotifier(task: Task, incr: Int) extends MessagesNotifier {
+  class SwingNotifier(task: Task, incr: Int, messageListener: PropertyChangeListener) extends MessagesNotifier {
 
     // progression
     var i = 0
@@ -120,6 +127,10 @@ trait SwingRunner extends JFrame { self ⇒
     private def reportProgress {
       i += incr
       task.reportProgress(Math.min(i, 99))
+    }
+
+    override def exampleStarted(name: String, location: String) {
+      messageListener.propertyChange(new PropertyChangeEvent(this, "message", null, name))
     }
 
     override def exampleSuccess(title: String, duration: Long) {
