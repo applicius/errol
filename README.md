@@ -27,11 +27,16 @@ object YourRunner extends SwingRunner {
 
   def subReporter = new HtmlReporter {} // Any specs2 reporter
 
-  def specification = {
-    // Your SpecificationStructure to be runned
+  // Provides specifications you want to run
+  def running(run: Seq[Specification] ⇒ Unit) {
+    // There you can do what you want before running (pre-processing)
+
+    run(new Seq[Specification](...))
   }
 
-  override def beforeClosing {} // Optional callback
+  override def beforeClosing(specs: Seq[Specification]) {
+    // Optional callback, with executed |specs| given as parameter
+  }
 }
 ```
 

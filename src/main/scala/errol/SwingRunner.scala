@@ -30,13 +30,18 @@ import scalaz.syntax.foldable._
 
 trait SwingRunner extends JFrame { self ⇒
   def subReporter: Reporter
-  def specifications: Seq[Specification]
   def buttonLabel: String
   def runningMessage: String
   def endMessage: String
   def frameTitle: String
 
-  def beforeClosing {}
+  /**
+   * Required to provide spefications to be executed.
+   * Allows to do pre-processing (before running specifications).
+   */
+  def running(run: Seq[Specification] ⇒ Unit)
+
+  def beforeClosing(specs: Seq[Specification]) {}
 
   val panel = new JPanel()
 
@@ -54,12 +59,6 @@ trait SwingRunner extends JFrame { self ⇒
   button.setEnabled(false)
   button.setMargin(new Insets(2, 2, 2, 2))
   button.setSize(70, 30)
-  button.addActionListener(new ActionListener() {
-    def actionPerformed(event: ActionEvent) {
-      beforeClosing
-      sys.exit(0)
-    }
-  })
 
   panel.add(label)
   panel.add(progressbar)
@@ -71,7 +70,14 @@ trait SwingRunner extends JFrame { self ⇒
   setLocationRelativeTo(null)
   setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE)
 
-  def main(args: Array[String]) {
+  private def execution(specs: Seq[Specification]) {
+    button.addActionListener(new ActionListener() {
+      def actionPerformed(event: ActionEvent) {
+        beforeClosing(specs)
+        sys.exit(0)
+      }
+    })
+
     SwingUtilities.invokeLater(new Runnable() {
       def run {
         val messageListener = new PropertyChangeListener {
@@ -81,7 +87,8 @@ trait SwingRunner extends JFrame { self ⇒
             label.setText(message)
           }
         }
-        val task = new Task(messageListener)
+
+        val task = new Task(specs, messageListener)
         task.addPropertyChangeListener(new PropertyChangeListener() {
           def propertyChange(e: PropertyChangeEvent) {
             if ("progress" == e.getPropertyName) {
@@ -97,7 +104,14 @@ trait SwingRunner extends JFrame { self ⇒
     })
   }
 
-  class Task(messageListener: PropertyChangeListener) extends SwingWorker[Unit, Unit] {
+  def main(args: Array[String]) {
+    running(execution)
+  }
+
+  final class Task(
+      specifications: Seq[Specification],
+      messageListener: PropertyChangeListener) extends SwingWorker[Unit, Unit] {
+
     def doInBackground {
       val task = this
       val steps: Float = specifications.foldMap(_.is.examples.size)
@@ -110,7 +124,7 @@ trait SwingRunner extends JFrame { self ⇒
         }
       }
 
-      run(self.specifications: _*)
+      run(specifications: _*)
     }
 
     override def done {

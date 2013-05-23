@@ -2,7 +2,7 @@ organization := "fr.applicius"
 
 name := "errol"
 
-version := "1.0.4-SNAPSHOT"
+version := "1.0.5-SNAPSHOT"
 
 scalaVersion := "2.10.0"
 
