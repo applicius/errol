@@ -1,10 +1,10 @@
-organization := "fr.applicius"
+organization := "errol"
 
 name := "errol"
 
 version := "1.0.7"
 
-scalaVersion := "2.11.2"
+scalaVersion := "2.11.6"
 
 scalacOptions += "-feature"
 

@@ -10,8 +10,8 @@ Swing'ing UI for specs2 (or one of Lady Sybil Ramkin's Swamp dragons).
 
 ## Usage
 
-Errol can be used on SBT projects add dependency `"fr.applicius" %% "errol" % "VERSION"` 
-and having `"Applicius Snapshots" at "https://raw.github.com/applicius/mvn-repo/master/snapshots/"` in resolvers.
+Errol can be used on SBT projects add dependency `"errol" %% "errol" % "VERSION"` 
+and having `"Tatami Releases" at "https://raw.github.com/cchantep/tatami/master/snapshots/"` in resolvers.
 
 ### Scala
 
